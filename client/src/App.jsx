@@ -11,6 +11,7 @@ import Home from '../pages/Home';
 import About from '../pages/About';
 import Login from '../components/Login';
 import Signup from '../components/Signup';
+import Dashboard from '../pages/Dashboard';
 
 function App() {
 	const [user, setUser] = useState(null);
@@ -55,11 +56,56 @@ function App() {
 		}
 	}
 
+	function handleLogin(email, password) {
+		const userInfo = {
+			email,
+			password,
+		};
+		try {
+			fetch(`/api/login`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(userInfo),
+			})
+				.then((res) => {
+					if (!res.ok) {
+						return res.json().then((data) => {
+							throw new Error(data.error);
+						});
+					}
+					return res.json();
+				})
+				.then((data) => {
+					console.log(data);
+					setUser(data);
+				});
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	function handleLogout() {
+		try {
+			fetch(`/api/logout`, {
+				method: 'DELETE',
+			})
+				.then((res) => res.json())
+				.then(setUser(null));
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	return (
 		<Router>
 			<div>
 				<header>
-					<NavBar user={user} />
+					<NavBar
+						user={user}
+						handleLogout={handleLogout}
+					/>
 				</header>
 			</div>
 			<Routes>
@@ -73,7 +119,13 @@ function App() {
 				/>
 				<Route
 					path='/login'
-					element={<Login />}
+					element={
+						user ? (
+							<Dashboard user={user} />
+						) : (
+							<Login handleLogin={handleLogin} />
+						)
+					}
 				/>
 				<Route
 					path='/signup'

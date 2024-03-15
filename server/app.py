@@ -34,30 +34,30 @@ def index():
 #         return {"message": "No user logged in."}, 401
     
 # Login
-# @app.post("/api/login")
-# def login():
-#     try:
-#         data = request.json
-#         user = User.query.filter_by(email=data.get("email")).first()
+@app.post("/api/login")
+def login():
+    try:
+        data = request.json
+        user = User.query.filter_by(email=data.get("email")).first()
 
-#         if user and bcrypt.check_password_hash(user.password_hash, data.get('password')):
-#             session["user_id"] = user.id
-#             print("success")
-#             return user.to_dict(rules=['-password_hash']), 200
-#         else:
-#             if not user:
-#                 return {"error": "User not found. Please try again."}, 404
-#             else:
-#                 return {"error": "Incorrect password. Please try again."}, 401
+        if user and bcrypt.check_password_hash(user.password_hash, data.get('password')):
+            session["user_id"] = user.id
+            print("success")
+            return user.to_dict(rules=['-password_hash']), 200
+        else:
+            if not user:
+                return {"error": "User not found. Please try again."}, 404
+            else:
+                return {"error": "Incorrect password. Please try again."}, 401
 
-#     except Exception as e:
-#         return {"error": str(e)}
+    except Exception as e:
+        return {"error": str(e)}
 
 # Logout
-# @app.delete('/api/logout')
-# def logout():
-#     session.pop('user_id', None) 
-#     return { "message": "Logged out"}, 200
+@app.delete('/api/logout')
+def logout():
+    session.pop('user_id', None) 
+    return { "message": "Logged out"}, 200
 
 # Signup
 @app.post("/api/signup")

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Login() {
-	const [username, setUsername] = useState('');
+function Login({ handleLogin }) {
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	const handleUsernameChange = (e) => {
-		setUsername(e.target.value);
+	const handleEmailChange = (e) => {
+		setEmail(e.target.value);
 	};
 
 	const handlePasswordChange = (e) => {
@@ -15,8 +15,8 @@ function Login() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// Add your login logic here
-		console.log('Username:', username);
+		handleLogin(email, password);
+		console.log('email:', email);
 		console.log('Password:', password);
 	};
 
@@ -25,12 +25,12 @@ function Login() {
 			<h2>Login</h2>
 			<form onSubmit={handleSubmit}>
 				<div>
-					<label htmlFor='username'>Username:</label>
+					<label htmlFor='email'>Email:</label>
 					<input
 						type='text'
-						id='username'
-						value={username}
-						onChange={handleUsernameChange}
+						id='email'
+						value={email}
+						onChange={handleEmailChange}
 					/>
 				</div>
 				<div>
