@@ -24,7 +24,7 @@ db = SQLAlchemy(metadata=metadata)
 
 # Models go here!
 class User(db.Model, SerializerMixin):
-    __tablename__ = 'users'
+    __tablename__ = 'users_table'
     
     email = db.Column(db.String, primary_key = True)
     id = db.Column(db.String, unique = True)
@@ -36,7 +36,7 @@ class User(db.Model, SerializerMixin):
         return f'<User: {self.email}>'
 
 class Item(db.Model, SerializerMixin):
-    __tablename__ = 'items'
+    __tablename__ = 'items_table'
 
     id = db.Column(db.String, primary_key = True)
     access_token = db.Column(db.String)
@@ -51,7 +51,7 @@ class Item(db.Model, SerializerMixin):
         return f'<Item: {self.user} at {self.bank_name}'
 
 class Account(db.Model, SerializerMixin):
-    __tablename__ = 'accounts'
+    __tablename__ = 'accounts_table'
 
     id = db.Column(db.String, primary_key = True)
     item_id = db.Column(db.String, db.ForeignKey('items.id'))
@@ -61,7 +61,7 @@ class Account(db.Model, SerializerMixin):
     serialize_rules = ('-item')
 
 class Transaction(db.Model, SerializerMixin):
-    __tablename__ = 'transactions'
+    __tablename__ = 'transactions_table'
 
     id = db.Column(db.String, primary_key = True)
     user_id = db.Column(db.String, db.ForeignKey('users.id'))
