@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Login() {
+function Signup() {
 	const [username, setUsername] = useState('');
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
 	const handleUsernameChange = (e) => {
 		setUsername(e.target.value);
+	};
+
+	const handleEmailChange = (e) => {
+		setEmail(e.target.value);
 	};
 
 	const handlePasswordChange = (e) => {
@@ -15,14 +20,15 @@ function Login() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// Add your login logic here
+		// Add your signup logic here
 		console.log('Username:', username);
+		console.log('Email:', email);
 		console.log('Password:', password);
 	};
 
 	return (
 		<div>
-			<h2>Login</h2>
+			<h2>Sign Up</h2>
 			<form onSubmit={handleSubmit}>
 				<div>
 					<label htmlFor='username'>Username:</label>
@@ -34,6 +40,15 @@ function Login() {
 					/>
 				</div>
 				<div>
+					<label htmlFor='email'>Email:</label>
+					<input
+						type='email'
+						id='email'
+						value={email}
+						onChange={handleEmailChange}
+					/>
+				</div>
+				<div>
 					<label htmlFor='password'>Password:</label>
 					<input
 						type='password'
@@ -42,13 +57,13 @@ function Login() {
 						onChange={handlePasswordChange}
 					/>
 				</div>
-				<button type='submit'>Login</button>
+				<button type='submit'>Sign Up</button>
 			</form>
 			<button>
-				<Link to='/signup'>New User? Signup</Link>
+				<Link to='/login'>Return to Login</Link>
 			</button>
 		</div>
 	);
 }
 
-export default Login;
+export default Signup;
