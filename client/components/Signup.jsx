@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Signup() {
-	const [username, setUsername] = useState('');
+function Signup({ handleSignup }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-
-	const handleUsernameChange = (e) => {
-		setUsername(e.target.value);
-	};
+	const [passwordRepeat, setPasswordRepeat] = useState('');
 
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
@@ -18,27 +14,19 @@ function Signup() {
 		setPassword(e.target.value);
 	};
 
+	const handlePasswordRepeatChange = (e) => {
+		setPasswordRepeat(e.target.value);
+	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// Add your signup logic here
-		console.log('Username:', username);
-		console.log('Email:', email);
-		console.log('Password:', password);
+		handleSignup(email, password, passwordRepeat);
 	};
 
 	return (
 		<div>
 			<h2>Sign Up</h2>
 			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor='username'>Username:</label>
-					<input
-						type='text'
-						id='username'
-						value={username}
-						onChange={handleUsernameChange}
-					/>
-				</div>
 				<div>
 					<label htmlFor='email'>Email:</label>
 					<input
@@ -55,6 +43,15 @@ function Signup() {
 						id='password'
 						value={password}
 						onChange={handlePasswordChange}
+					/>
+				</div>
+				<div>
+					<label htmlFor='password'>Confirm Password:</label>
+					<input
+						type='password'
+						id='passwordRepeat'
+						value={passwordRepeat}
+						onChange={handlePasswordRepeatChange}
 					/>
 				</div>
 				<button type='submit'>Sign Up</button>

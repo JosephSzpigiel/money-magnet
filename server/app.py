@@ -2,7 +2,7 @@ from flask import Flask, make_response, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
-from models import db
+from models import db, User
 from flask_cors import CORS
 from dotenv import dotenv_values
 from flask_bcrypt import Bcrypt
@@ -58,6 +58,30 @@ def index():
 # def logout():
 #     session.pop('user_id', None) 
 #     return { "message": "Logged out"}, 200
+
+# Signup
+@app.post("/api/signup")
+def signup():
+    try:
+        data = request.json
+        existing_user = User.query.filter_by(email=data.get("email")).first()
+
+        if existing_user:
+            return {"error": "Email already exists. Please select new email."}, 400
+    
+        new_user = User(
+            email=data.get("email"),
+            password_hash=bcrypt.generate_password_hash(data.get("password")),
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return new_user.to_dict(rules=['-password_hash']), 200
+
+    except Exception as e:
+        return {"error": str(e)}, 500
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
