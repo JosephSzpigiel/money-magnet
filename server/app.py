@@ -1,35 +1,63 @@
-#!/usr/bin/env python3
+from flask import Flask, make_response, jsonify, request, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from datetime import datetime
+from models import db
+from flask_cors import CORS
+from dotenv import dotenv_values
+from flask_bcrypt import Bcrypt
+config = dotenv_values(".env")
 
-# Standard library imports
+app = Flask(__name__)
+app.secret_key = config['FLASK_SECRET_KEY']
+CORS(app)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.json.compact = False
+bcrypt = Bcrypt(app)
+migrate = Migrate(app, db)
 
-# Remote library imports
-from flask import request, make_response, session
-from flask_restful import Resource
-import datetime
+db.init_app(app)
 
-# Local imports
-from config import app, db, api
-# Add your model imports
-from models import User, Item, Account, Transaction
+@app.get("/")
+def index():
+    return "money magnet backend"
 
-# Views go here!
+# Check session
+# @app.get("/api/check_session")
+# def check_session():
+#     user = db.session.get(User, session.get('user_id'))
+#     print(f'check session: {user}')
+#     if user:
+#         return user.to_dict(rules=['-password']), 200
+#     else:
+#         return {"message": "No user logged in."}, 401
+    
+# Login
+# @app.post("/api/login")
+# def login():
+#     try:
+#         data = request.json
+#         user = User.query.filter_by(email=data.get("email")).first()
 
-class Users(Resource):
-    def get(self):
-        return make_response([user.to_dict() for user in User.query.all()], 200)
-    def post(self):
-        params = request.json
-        new_user = User(
-            email = params['email'],
-            password = params['password']
-        )
-        db.session.add(new_user)
-        db.session.commit()
-        session['user_email'] = new_user.email
-        return make_response({'user': new_user.to_dict()}, 201)
+#         if user and bcrypt.check_password_hash(user.password_hash, data.get('password')):
+#             session["user_id"] = user.id
+#             print("success")
+#             return user.to_dict(rules=['-password_hash']), 200
+#         else:
+#             if not user:
+#                 return {"error": "User not found. Please try again."}, 404
+#             else:
+#                 return {"error": "Incorrect password. Please try again."}, 401
 
-api.add_resource(Users, '/users')
+#     except Exception as e:
+#         return {"error": str(e)}
 
+# Logout
+# @app.delete('/api/logout')
+# def logout():
+#     session.pop('user_id', None) 
+#     return { "message": "Logged out"}, 200
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: de0fc7f7ec04
+Revision ID: fc8be1679299
 Revises: 
-Create Date: 2024-03-11 14:15:31.597426
+Create Date: 2024-03-15 11:12:51.333142
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'de0fc7f7ec04'
+revision = 'fc8be1679299'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,8 +22,8 @@ def upgrade():
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('id', sa.String(), nullable=True),
     sa.Column('password', sa.String(), nullable=True),
-    sa.PrimaryKeyConstraint('email'),
-    sa.UniqueConstraint('id')
+    sa.PrimaryKeyConstraint('email', name=op.f('pk_users')),
+    sa.UniqueConstraint('id', name=op.f('uq_users_id'))
     )
     op.create_table('items',
     sa.Column('id', sa.String(), nullable=False),
@@ -32,14 +32,14 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_items_user_id_users')),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_items'))
     )
     op.create_table('accounts',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('item_id', sa.String(), nullable=True),
     sa.Column('name', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['item_id'], ['items.id'], name=op.f('fk_accounts_item_id_items')),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_accounts'))
     )
     op.create_table('transactions',
     sa.Column('id', sa.String(), nullable=False),
@@ -54,7 +54,7 @@ def upgrade():
     sa.Column('is_removed', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['account_id'], ['accounts.id'], name=op.f('fk_transactions_account_id_accounts')),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_transactions_user_id_users')),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_transactions'))
     )
     # ### end Alembic commands ###
 
