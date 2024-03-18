@@ -2,7 +2,7 @@ from flask import Flask, make_response, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
-from models import db, User
+from models import db, User, Item
 from flask_cors import CORS
 from dotenv import dotenv_values
 from flask_bcrypt import Bcrypt
@@ -29,14 +29,14 @@ def index():
 
 
 # Check session
-# @app.get("/api/check_session")
-# def check_session():
-#     user = db.session.get(User, session.get('user_id'))
-#     print(f'check session: {user}')
-#     if user:
-#         return user.to_dict(rules=['-password']), 200
-#     else:
-#         return {"message": "No user logged in."}, 401
+@app.get("/api/check_session")
+def check_session():
+    user = db.session.get(User, session.get('user_id'))
+    print(f'check session: {user}')
+    if user:
+        return user.to_dict(rules=['-password']), 200
+    else:
+        return {"message": "No user logged in."}, 401
     
 # Login
 @app.post("/api/login")
@@ -86,6 +86,36 @@ def signup():
 
     except Exception as e:
         return {"error": str(e)}, 500
+    
+# API endpoint to create an item instance associated with the logged-in user
+@app.post('/api/create_item/<int:user_id>')
+def create_item(user_id):
+    try:
+        # Extract data from the request body
+        data = request.json
+
+        # Check if the user exists
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        itemId = data['itemId']
+        accessToken = data['accessToken']
+
+        # Create a new item instance associated with the user
+        new_item = Item(item_id=itemId, access_token=accessToken, user_id=user_id)
+
+        # Add the item to the user's items list
+        user.items.append(new_item)
+        
+        # Commit the changes to the database
+        db.session.add(new_item)
+        db.session.commit()
+        
+        return jsonify({'message': 'Item created successfully'}), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':

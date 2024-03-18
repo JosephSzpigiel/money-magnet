@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PlaidLink } from 'react-plaid-link'; // Import PlaidLink component
 
-const LinkBankAccount = () => {
+const LinkBankAccount = ({ user }) => {
 	const [linkToken, setLinkToken] = useState('');
 	const [transactions, setTransactions] = useState([]);
 
@@ -43,6 +43,24 @@ const LinkBankAccount = () => {
 			console.log('Access Token:', accessToken);
 			console.log('Item ID:', itemId);
 
+			// Call the backend to create an item associated with the user
+			const createItemResponse = await fetch(`/api/create_item/${user.id}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					userId: user.id,
+					itemId: itemId,
+					accessToken: accessToken,
+				}),
+			});
+			if (!createItemResponse.ok) {
+				throw new Error('Failed to create item');
+			}
+			const itemData = await createItemResponse.json();
+			console.log('Item created:', itemData);
+
 			// Fetch transactions
 			const transactionsResponse = await fetch('/api/transactions', {
 				method: 'GET',
@@ -60,7 +78,7 @@ const LinkBankAccount = () => {
 			// Update state with fetched transactions
 			setTransactions(fetchedTransactions);
 		} catch (error) {
-			console.error('Error exchanging public token for access token:', error);
+			console.error('Error during Plaid link success:', error);
 		}
 	};
 
