@@ -8,19 +8,23 @@ function NavBar({ user, handleLogout }) {
 	}
 
 	return (
-		<header>
-			<div className="grid-cols-3">
-				<nav>
-					<NavLink to='/'>Home</NavLink>
-					<NavLink to='/about'>About</NavLink>
-					{user ? (
-						<button onClick={handleLogoutClick}>Logout</button>
-					) : (
-						<NavLink to='/login'>Login</NavLink>
-					)}
+			<div>
+				<nav className="flex bg-blue-500">
+          <div className="text-white p-1">
+					  <NavLink to='/'>Home</NavLink>
+          </div>
+          <div className="text-white p-1">
+            <NavLink to='/about'>About</NavLink>
+          </div>
+					<div className="text-white p-1">
+            {user ? (
+              <button onClick={handleLogoutClick}>Logout</button>
+            ) : (
+              <NavLink to='/login'>Login</NavLink>
+            )}
+          </div>
 				</nav>
 			</div>
-		</header>
 	);
 }
 
