@@ -7,6 +7,7 @@ from flask_cors import CORS
 from dotenv import dotenv_values
 from flask_bcrypt import Bcrypt
 config = dotenv_values(".env")
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.secret_key = config['FLASK_SECRET_KEY']
