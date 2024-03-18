@@ -3,6 +3,7 @@ import { PlaidLink } from 'react-plaid-link'; // Import PlaidLink component
 
 const LinkBankAccount = () => {
 	const [linkToken, setLinkToken] = useState('');
+	const [transactions, setTransactions] = useState([]);
 
 	const createLinkToken = async () => {
 		try {
@@ -42,7 +43,22 @@ const LinkBankAccount = () => {
 			console.log('Access Token:', accessToken);
 			console.log('Item ID:', itemId);
 
-			// Do something with access token and item ID, such as storing them in state or localStorage
+			// Fetch transactions
+			const transactionsResponse = await fetch('/api/transactions', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+			if (!transactionsResponse.ok) {
+				throw new Error('Failed to fetch transactions');
+			}
+			const transactionsData = await transactionsResponse.json();
+			const fetchedTransactions = transactionsData.latest_transactions;
+			console.log('Transactions:', fetchedTransactions);
+
+			// Update state with fetched transactions
+			setTransactions(fetchedTransactions);
 		} catch (error) {
 			console.error('Error exchanging public token for access token:', error);
 		}
