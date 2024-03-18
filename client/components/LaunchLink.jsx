@@ -25,10 +25,11 @@ const LinkBankAccount = () => {
 
 	return (
 		<div>
-			<button onClick={createLinkToken}>Link Bank Account</button>
+			{/* <button onClick={createLinkToken}>Link Bank Account</button> */}
 			{linkToken && (
 				<PlaidLink
 					token={linkToken}
+					onClick={createLinkToken}
 					onSuccess={handlePlaidLinkSuccess}
 					// Add other Plaid Link props as needed
 				>
