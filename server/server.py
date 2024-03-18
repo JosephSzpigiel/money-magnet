@@ -137,10 +137,6 @@ def init_plaid_routes(app):
             'products': PLAID_PRODUCTS
         })
 
-    @app.get('/api/test')
-    def test():
-        return jsonify({"test":"success"})
-
     @app.route('/api/create_link_token_for_payment', methods=['POST'])
     def create_link_token_for_payment():
         global payment_id
