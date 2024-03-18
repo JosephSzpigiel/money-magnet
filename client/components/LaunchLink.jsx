@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { PlaidLink } from 'react-plaid-link'; // Import PlaidLink component
 
-const LinkBankAccount = () => {
-	const [linkToken, setLinkToken] = useState('');
+const LinkBankAccount = ({authToken, setAuthToken}) => {
 
 	const createLinkToken = async () => {
 		try {
@@ -12,8 +11,18 @@ const LinkBankAccount = () => {
 					'Content-Type': 'application/json',
 				},
 			});
-			const data = await response.json();
-			setLinkToken(data.link_token);
+			const data = await response.json()
+			.then((linkToken) =>{
+				fetch('/api/set_access_token', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body:{
+						
+					}
+				})
+			})
 		} catch (error) {
 			console.error('Error creating link token:', error);
 		}
@@ -25,8 +34,8 @@ const LinkBankAccount = () => {
 
 	return (
 		<div>
-			{/* <button onClick={createLinkToken}>Link Bank Account</button> */}
-			{linkToken && (
+			<button onClick={createLinkToken}>Link Bank Account</button>
+			{authToken && (
 				<PlaidLink
 					token={linkToken}
 					onClick={createLinkToken}
