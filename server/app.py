@@ -17,6 +17,9 @@ app.json.compact = False
 bcrypt = Bcrypt(app)
 migrate = Migrate(app, db)
 
+from server import init_plaid_routes
+init_plaid_routes(app)
+
 db.init_app(app)
 
 @app.get("/")
