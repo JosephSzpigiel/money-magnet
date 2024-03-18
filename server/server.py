@@ -230,8 +230,9 @@ def init_plaid_routes(app):
         global access_token
         global item_id
         global transfer_id
-        public_token = request.form['public_token']
         try:
+            data = request.json
+            public_token = data['public_token']
             exchange_request = ItemPublicTokenExchangeRequest(
                 public_token=public_token)
             exchange_response = client.item_public_token_exchange(exchange_request)
@@ -240,7 +241,6 @@ def init_plaid_routes(app):
             return jsonify(exchange_response.to_dict())
         except plaid.ApiException as e:
             return json.loads(e.body)
-
 
     # Retrieve ACH or ETF account numbers for an Item
     # https://plaid.com/docs/#auth
