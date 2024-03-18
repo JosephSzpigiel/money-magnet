@@ -9,7 +9,7 @@ function NavBar({ user, handleLogout }) {
 
 	return (
 		<header>
-			<div>
+			<div className="grid-cols-3">
 				<nav>
 					<NavLink to='/'>Home</NavLink>
 					<NavLink to='/about'>About</NavLink>
