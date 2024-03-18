@@ -1,7 +1,7 @@
 function Home() {
 	return (
     <div>
-      <h2>Home</h2>
+      <div className="text-xl font-bold">Home</div>
     </div>
   )
 }

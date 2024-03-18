@@ -24,40 +24,46 @@ function Signup({ handleSignup }) {
 	};
 
 	return (
-		<div>
-			<h2>Sign Up</h2>
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor='email'>Email:</label>
+		<div className="h-screen flex flex-col items-center justify-center">
+			<div className="order-1 text-xl font-bold">Sign Up</div>
+			<form className="border-blue-500 border-2 rounded order-2 p-4 bg-blue-300" onSubmit={handleSubmit}>
+				<div className="m-2">
+					<label htmlFor='email'></label>
 					<input
 						type='email'
 						id='email'
 						value={email}
+            placeholder="Email"
 						onChange={handleEmailChange}
+            className="borde p-1"
 					/>
 				</div>
-				<div>
-					<label htmlFor='password'>Password:</label>
+				<div className="m-2">
+					<label htmlFor='password'></label>
 					<input
 						type='password'
 						id='password'
 						value={password}
+            placeholder="Password"
 						onChange={handlePasswordChange}
+            className="border p-1"
 					/>
 				</div>
-				<div>
-					<label htmlFor='password'>Confirm Password:</label>
+				<div className="m-2">
+					<label htmlFor='password'></label>
 					<input
 						type='password'
 						id='passwordRepeat'
 						value={passwordRepeat}
+            placeholder="Confirm Password"
 						onChange={handlePasswordRepeatChange}
+            className="border p-1"
 					/>
 				</div>
-				<button type='submit'>Sign Up</button>
+				<button className="border text-white rounded bg-sky-800 p-1 hover:bg-sky-600" type='submit'>Sign Up</button>
 			</form>
-			<button>
-				<Link to='/login'>Return to Login</Link>
+			<button className="order-3">
+				<Link to='/login' className="hover:text-red-500">Return to Login</Link>
 			</button>
 		</div>
 	);
