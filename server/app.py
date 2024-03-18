@@ -27,6 +27,7 @@ db.init_app(app)
 def index():
     return "money magnet backend"
 
+
 # Check session
 # @app.get("/api/check_session")
 # def check_session():
