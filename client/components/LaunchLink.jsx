@@ -44,22 +44,22 @@ const LinkBankAccount = ({ user }) => {
 			console.log('Item ID:', itemId);
 
 			// Call the backend to create an item associated with the user
-			const createItemResponse = await fetch(`/api/create_item/${user.id}`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					userId: user.id,
-					itemId: itemId,
-					accessToken: accessToken,
-				}),
-			});
-			if (!createItemResponse.ok) {
-				throw new Error('Failed to create item');
-			}
-			const itemData = await createItemResponse.json();
-			console.log('Item created:', itemData);
+			// const createItemResponse = await fetch(`/api/create_item/${user.id}`, {
+			// 	method: 'POST',
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 	},
+			// 	body: JSON.stringify({
+			// 		userId: user.id,
+			// 		itemId: itemId,
+			// 		accessToken: accessToken,
+			// 	}),
+			// });
+			// if (!createItemResponse.ok) {
+			// 	throw new Error('Failed to create item');
+			// }
+			// const itemData = await createItemResponse.json();
+			// console.log('Item created:', itemData);
 
 			// Fetch transactions
 			const transactionsResponse = await fetch('/api/transactions', {

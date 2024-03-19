@@ -7,7 +7,9 @@ import json
 import time
 
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
+
+from models import db, User, Item, Transaction
 
 import plaid
 from plaid.model.payment_amount import PaymentAmount
@@ -238,7 +240,12 @@ def init_plaid_routes(app):
             exchange_response = client.item_public_token_exchange(exchange_request)
             access_token = exchange_response['access_token']
             item_id = exchange_response['item_id']
-            return jsonify(exchange_response.to_dict())
+            new_item = Item(item_id=item_id, access_token=access_token, user_id=session["user_id"])
+            db.session.add(new_item)
+            db.session.commit()
+
+            return jsonify({'message': 'Item created successfully'}), 201
+
         except plaid.ApiException as e:
             return json.loads(e.body)
 
@@ -267,38 +274,79 @@ def init_plaid_routes(app):
     @app.route('/api/transactions', methods=['GET'])
     def get_transactions():
         # Set cursor to empty to receive all historical updates
-        cursor = ''
+        print(item_id)
+        items = Item.query.filter(Item.user_id == session["user_id"]).all()
+        print(items)
+        for item in items:
+            print(item.cursor)
+            cursor = item.cursor
 
-        # New transaction updates since "cursor"
-        added = []
-        modified = []
-        removed = [] # Removed transaction ids
-        has_more = True
-        try:
-            # Iterate through each page of new transaction updates for item
-            while has_more:
-                request = TransactionsSyncRequest(
-                    access_token=access_token,
-                    cursor=cursor,
-                )
-                response = client.transactions_sync(request).to_dict()
-                # Add this page of results
-                added.extend(response['added'])
-                modified.extend(response['modified'])
-                removed.extend(response['removed'])
-                has_more = response['has_more']
-                # Update cursor to the next cursor
-                cursor = response['next_cursor']
-                pretty_print_response(response)
+            # New transaction updates since "cursor"
+            added = []
+            modified = []
+            removed = [] # Removed transaction ids
+            has_more = True
+            try:
+                # Iterate through each page of new transaction updates for item
+                while has_more:
+                    request = TransactionsSyncRequest(
+                        access_token=item.access_token,
+                        cursor=cursor,
+                    )
+                    response = client.transactions_sync(request).to_dict()
+                    # Add this page of results
+                    added.extend(response['added'])
+                    modified.extend(response['modified'])
+                    removed.extend(response['removed'])
+                    has_more = response['has_more']
+                    # Update cursor to the next cursor
+                    cursor = response['next_cursor']
+                    pretty_print_response(response)
+                # Add handle transactions (Testing Added)
+                added_Objs = [Transaction(
+                        id = transaction['transaction_id'],
+                        user_id = session['user_id'],
+                        account_id = transaction['account_id'],
+                        category = transaction["personal_finance_category"]['primary'],
+                        date = str(transaction['date']),
+                        authorized_date = str(transaction['authorized_date']),
+                        name = transaction['name'],
+                        amount = transaction['amount'],
+                        currency_code = transaction['iso_currency_code'],
+                        is_removed = 0
+                    ) for transaction in added]
+                for transaction in modified:
+                    print(transaction)
+                    db_transaction = Transaction.query.filter_by(id = transaction['transaction_id']).first()
+                    print(db_transaction)
+                    db.session.delete(db_transaction)
+                    added_Objs.append(Transaction(
+                        id = transaction['transaction_id'],
+                        user_id = session['user_id'],
+                        account_id = transaction['account_id'],
+                        category = transaction["personal_finance_category"]['primary'],
+                        date = str(transaction['date']),
+                        authorized_date = str(transaction['authorized_date']),
+                        name = transaction['name'],
+                        amount = transaction['amount'],
+                        currency_code = transaction['iso_currency_code'],
+                        is_removed = 0
+                    ))
+                for transaction in removed:
+                    removed_transaction = Transaction.query.filter_by(id == transaction.transaction_id)
+                    removed_transaction['is_removed'] = 1
+                item.cursor = cursor
+                db.session.add_all(added_Objs)
+                db.session.commit()
 
-            # Return the 8 most recent transactions
-            latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
-            return jsonify({
-                'latest_transactions': latest_transactions})
+                # Return the 8 most recent transactions
+                latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
+                return jsonify({
+                    'latest_transactions': latest_transactions})
 
-        except plaid.ApiException as e:
-            error_response = format_error(e)
-            return jsonify(error_response)
+            except plaid.ApiException as e:
+                error_response = format_error(e)
+                return jsonify(error_response)
 
 
     # Retrieve Identity data for an Item

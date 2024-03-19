@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {
 	BrowserRouter as Router,
 	Routes,
-	Route,
-	Navigate,
+	Route
 } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Home from '../pages/Home';
@@ -46,6 +45,7 @@ function App() {
 					})
 					.then((data) => {
 						console.log(data);
+						setUser(data)
 					})
 					.catch((error) => {
 						console.log(error);
@@ -129,7 +129,7 @@ function App() {
 				/>
 				<Route
 					path='/signup'
-					element={<Signup handleSignup={handleSignup} />}
+					element={<Signup handleSignup={handleSignup}/>}
 				/>
 			</Routes>
 		</Router>

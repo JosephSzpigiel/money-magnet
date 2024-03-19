@@ -88,34 +88,37 @@ def signup():
         return {"error": str(e)}, 500
     
 # API endpoint to create an item instance associated with the logged-in user
-@app.post('/api/create_item/<int:user_id>')
-def create_item(user_id):
-    try:
-        # Extract data from the request body
-        data = request.json
+# Not sure we need an endpoint for this- when making the connection we can create the item - Joseph
 
-        # Check if the user exists
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-        
-        itemId = data['itemId']
-        accessToken = data['accessToken']
+# @app.post('/api/create_item/<int:user_id>')
+# def create_item(user_id):
+#     try:
+#         # Extract data from the request body
+#         data = request.json
 
-        # Create a new item instance associated with the user
-        new_item = Item(item_id=itemId, access_token=accessToken, user_id=user_id)
+#         # Check if the user exists
+#         user = User.query.get(user_id)
+#         if not user:
+#             return jsonify({'error': 'User not found'}), 404
+        
+#         itemId = data['itemId']
+#         accessToken = data['accessToken']
 
-        # Add the item to the user's items list
-        user.items.append(new_item)
+#         # Create a new item instance associated with the user
+#         new_item = Item(item_id=itemId, access_token=accessToken, user_id=user_id)
+
+#         # Add the item to the user's items list
+#         user.items.append(new_item)
         
-        # Commit the changes to the database
-        db.session.add(new_item)
-        db.session.commit()
+#         # Commit the changes to the database
+#         db.session.add(new_item)
+#         db.session.commit()
         
-        return jsonify({'message': 'Item created successfully'}), 201
+#         return jsonify({'message': 'Item created successfully'}), 201
         
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+
 
 
 if __name__ == '__main__':

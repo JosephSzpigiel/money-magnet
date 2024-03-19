@@ -46,7 +46,8 @@ class Item(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates='items')
     accounts = db.relationship('Account', back_populates='item', cascade='all, delete-orphan')
     is_active = db.Column(db.Boolean, default=1)
-    serialize_rules = ('-user')
+    cursor = db.Column(db.String, default='')
+    serialize_rules = ('-user', '-access_token')
 
     def __repr__(self):
         return f'<Item: {self.user} at {self.bank_name}'
@@ -55,7 +56,7 @@ class Item(db.Model, SerializerMixin):
 class Account(db.Model, SerializerMixin):
     __tablename__ = 'accounts_table'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String, primary_key=True)
     item_id = db.Column(db.String, db.ForeignKey('items_table.id'))  # Define foreign key here
     item = db.relationship('Item', back_populates='accounts')
     transactions = db.relationship('Transaction', back_populates='account', cascade='all, delete-orphan')
@@ -65,8 +66,8 @@ class Account(db.Model, SerializerMixin):
 class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transactions_table'
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String, db.ForeignKey('users_table.email'))  
+    id = db.Column(db.String, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users_table.id'))  
     user = db.relationship('User', back_populates='transactions')
     account_id = db.Column(db.String, db.ForeignKey('accounts_table.id'))
     account = db.relationship('Account', back_populates='transactions')
@@ -77,5 +78,4 @@ class Transaction(db.Model, SerializerMixin):
     amount = db.Column(db.Float)
     currency_code = db.Column(db.String)
     is_removed = db.Column(db.Boolean, default=0)
-
-    
+    serialize_rules = ('-account', '-user')
