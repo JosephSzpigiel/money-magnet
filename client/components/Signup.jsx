@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Signup({ handleSignup }) {
+function Signup({ handleSignup, error }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [passwordRepeat, setPasswordRepeat] = useState('');
+
+  console.log(error[0])
 
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
@@ -65,6 +67,7 @@ function Signup({ handleSignup }) {
 			<button className="order-3">
 				<Link to='/login' className="hover:text-red-500">Return to Login</Link>
 			</button>
+      <p className="text-red-600">{error}</p>
 		</div>
 	);
 }

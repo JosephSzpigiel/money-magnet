@@ -15,6 +15,7 @@ import Dashboard from '../pages/Dashboard';
 
 function App() {
 	const [user, setUser] = useState(null);
+  const [error, setError] = useState('');
 
 	function handleSignup(signupEmail, signupPassword, signupPasswordRepeat) {
 		console.log(
@@ -39,19 +40,13 @@ function App() {
 					.then((res) => {
 						if (!res.ok) {
 							return res.json().then((data) => {
+                setError((data.error))
 								throw new Error(data.error);
 							});
 						}
 						return res.json();
 					})
-					.then((data) => {
-						console.log(data);
-					})
-					.catch((error) => {
-						console.log(error);
-					});
 			} catch (error) {
-				console.log(error);
 			}
 		}
 	}
@@ -72,17 +67,18 @@ function App() {
 				.then((res) => {
 					if (!res.ok) {
 						return res.json().then((data) => {
+              setError(data.error);
 							throw new Error(data.error);
 						});
 					}
 					return res.json();
 				})
 				.then((data) => {
-					console.log(data);
+					console.log('data', data);
 					setUser(data);
 				});
 		} catch (error) {
-			console.log(error);
+			console.log('error', error);
 		}
 	}
 
@@ -94,7 +90,7 @@ function App() {
 				.then((res) => res.json())
 				.then(setUser(null));
 		} catch (error) {
-			console.log(error);
+			console.log('error', error);
 		}
 	}
 
@@ -123,13 +119,13 @@ function App() {
 						user ? (
 							<Dashboard user={user} />
 						) : (
-							<Login handleLogin={handleLogin} />
+							<Login handleLogin={handleLogin} error={error} />
 						)
 					}
 				/>
 				<Route
 					path='/signup'
-					element={<Signup handleSignup={handleSignup} />}
+					element={<Signup handleSignup={handleSignup} error={error} />}
 				/>
 			</Routes>
 		</Router>

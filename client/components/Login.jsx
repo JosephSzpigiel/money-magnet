@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Login({ handleLogin }) {
+function Login({ handleLogin, error }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
@@ -51,6 +51,7 @@ function Login({ handleLogin }) {
 			<button className="order-3">
 				<Link to='/signup' className="hover:text-red-500">New User? Signup</Link>
 			</button>
+      <p className="text-red-600">{error}</p>
 		</div>
 	);
 }
